@@ -6,6 +6,7 @@
     <title>Gamificação - Devalor</title>
     <link rel="icon" href="Devalor.jpeg" type="">
     <link rel="stylesheet" href="comercial.css">
+    <link rel="stylesheet" href="app.css">
 </head>
 <body>
     <header>
@@ -39,7 +40,32 @@
             </table>
         </section>
 
-        <section id="destaque-do-mes">
+        
+        <section id="lancamento">
+            <h2>Lançamento de números</h2>
+            <p class="sub">Digite os números abaixo. Os pontos são calculados automaticamente e ficam salvos localmente (neste navegador).</p>
+
+            <div class="controls">
+                <div class="left">
+                    <button class="btn danger" id="resetar-dados" type="button">Zerar</button>
+                    <button class="btn" id="exportar-json" type="button">Exportar</button>
+                    <label class="btn" for="importar-json">Importar</label>
+                    <input id="importar-json" type="file" accept="application/json" style="display:none;">
+                </div>
+                <span class="badge" id="status-salvamento"></span>
+            </div>
+
+            <div class="table-wrap">
+                <table id="tabela-lancamento" aria-label="Tabela de lançamento de números e pontos"></table>
+            </div>
+
+            <details class="formula">
+                <summary>Como calculamos os pontos</summary>
+                <ul id="lista-formula"></ul>
+            </details>
+        </section>
+
+<section id="destaque-do-mes">
             <h2>Destaques do Mês ⭐</h2>
             <div id="vendedor-destaque">
                 <p id="primeiro-destaque"></p>
@@ -55,61 +81,33 @@
         </section>
     </main>
 
+        <script src="gamificacao.js"></script>
     <script>
-        const vendedores = [
-            { id: 1, nome: "Alana", vendas: 1000, pontos: 26 },
-            { id: 2, nome: "Laura", vendas: 500, pontos: 20 },
-            { id: 3, nome: "Pedro", vendas: 0, pontos: 40 },
-            { id: 4, nome: "Sabrina", vendas: 0, pontos: 10 },
-        ]; 
+        const config = {
+            storageKey: "devalor_gamificacao_sdr_v1",
+            people: [
+                { id: "alana", nome: "Alana" },
+                { id: "laura", nome: "Laura" },
+                { id: "pedro", nome: "Pedro" },
+                { id: "sabrina", nome: "Sabrina" },
+            ],
+            metrics: [
+                { key: "reuniao_agendada", label: "Reunião agendada", type: "number", points: 2 },
+                { key: "reuniao_realizada", label: "Reunião realizada", type: "number", points: 4 },
+                { key: "sem_faltas", label: "Sem faltas/atrasos", type: "checkbox", points: 1 },
+            ],
+        };
+
+        const app = Gamificacao.init(config);
+
 
         const premios = [
-            { id: 104, nome: "1º Lugar: Folga integral dia 01/08/2025 + R$150,00.", pontos: 2000 },
-            { id: 105, nome: "2º Lugar: Meio período de folga dia 01/08/2025 + R$100,00", pontos: 1000 },
+            { id: 1, nome: "1º Lugar: Folga integral dia 01/08/2025 + R$150,00." },
+            { id: 2, nome: "2º Lugar: Meio período de folga dia 01/08/2025 + R$100,00" },
         ];
 
-        function popularRanking() {
-            const tabelaRanking = document.getElementById('tabela-ranking');
-            tabelaRanking.innerHTML = ''; 
+        Gamificacao.renderPremios(premios, "lista-premios");
 
-            const rankingOrdenado = [...vendedores].sort((a, b) => b.pontos - a.pontos);
-
-            rankingOrdenado.forEach((vendedor, index) => {
-                const row = tabelaRanking.insertRow();
-                const posicaoCell = row.insertCell();
-                const nomeCell = row.insertCell();
-                const pontosCell = row.insertCell();
-
-                posicaoCell.textContent = index + 1;
-                nomeCell.textContent = vendedor.nome;
-                pontosCell.textContent = vendedor.pontos;
-            });
-        }
-
-        function definirDestaque() {
-            const ranking = [...vendedores].sort((a, b) => b.pontos - a.pontos);
-
-            document.getElementById('primeiro-destaque').textContent = `🥇 ${ranking[0].nome} — ${ranking[0].pontos} pontos`;
-            document.getElementById('segundo-destaque').textContent = `🥈 ${ranking[1].nome} — ${ranking[1].pontos} pontos`;
-            document.getElementById('terceiro-destaque').textContent = `🥉 ${ranking[2].nome} — ${ranking[2].pontos} pontos`;    
-            document.getElementById('quarto-destaque').textContent = `4º ${ranking[3].nome} — ${ranking[3].pontos} pontos`;
-        }
-
-        function popularPremios() {
-            const listaPremios = document.getElementById('lista-premios');
-            listaPremios.innerHTML = '';
-
-            premios.forEach(premio => {
-                const listItem = document.createElement('li');
-                listItem.textContent = `${premio.nome}`;
-                listaPremios.appendChild(listItem);
-            });
-        }
-
-        // Inicialização
-        popularRanking();
-        definirDestaque();
-        popularPremios();
     </script>
 </body>
 </html>

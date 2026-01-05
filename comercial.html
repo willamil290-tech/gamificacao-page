@@ -6,6 +6,7 @@
     <title>Gamificação - Devalor</title>
     <link rel="icon" href="Devalor.jpeg" type="">
     <link rel="stylesheet" href="comercial.css">
+    <link rel="stylesheet" href="app.css">
 </head>
 <body>
     <header>
@@ -39,7 +40,32 @@
             </table>
         </section>
 
-        <section id="destaque-do-mes">
+        
+        <section id="lancamento">
+            <h2>Lançamento de números</h2>
+            <p class="sub">Digite os números abaixo. Os pontos são calculados automaticamente e ficam salvos localmente (neste navegador).</p>
+
+            <div class="controls">
+                <div class="left">
+                    <button class="btn danger" id="resetar-dados" type="button">Zerar</button>
+                    <button class="btn" id="exportar-json" type="button">Exportar</button>
+                    <label class="btn" for="importar-json">Importar</label>
+                    <input id="importar-json" type="file" accept="application/json" style="display:none;">
+                </div>
+                <span class="badge" id="status-salvamento"></span>
+            </div>
+
+            <div class="table-wrap">
+                <table id="tabela-lancamento" aria-label="Tabela de lançamento de números e pontos"></table>
+            </div>
+
+            <details class="formula">
+                <summary>Como calculamos os pontos</summary>
+                <ul id="lista-formula"></ul>
+            </details>
+        </section>
+
+<section id="destaque-do-mes">
             <h2>Destaques do Mês ⭐</h2>
             <div id="vendedor-destaque">
                 <p id="primeiro-destaque"></p>
@@ -55,108 +81,34 @@
         </section>
     </main>
 
+        <script src="gamificacao.js"></script>
     <script>
-        const vendedores = [
-            { id: 1, nome: "Alessandra", vendas: 1000, pontos: 10 },
-            { id: 2, nome: "Luciane", vendas: 500, pontos: 22 },
-            { id: 3, nome: "Raissa", vendas: 0, pontos: 18 },
-            { id: 4, nome: "Bruna", vendas: 0, pontos: 12 },
-        ]; 
+        const config = {
+            storageKey: "devalor_gamificacao_comercial_v1",
+            people: [
+                { id: "alessandra", nome: "Alessandra" },
+                { id: "luciane", nome: "Luciane" },
+                { id: "raissa", nome: "Raissa" },
+                { id: "bruna", nome: "Bruna" },
+            ],
+            metrics: [
+                { key: "ficha_cadastral", label: "Ficha cadastral", type: "number", points: 1 },
+                { key: "bordero_cliente_novo", label: "Borderô cliente novo", type: "number", points: 3 },
+                { key: "meta_100", label: "Meta (100% proporcional)", type: "checkbox", points: 5 },
+                { key: "sem_faltas", label: "Sem faltas/atrasos", type: "checkbox", points: 1 },
+            ],
+        };
+
+        const app = Gamificacao.init(config);
+
 
         const premios = [
-            { id: 104, nome: "1º Lugar: Folga integral dia 01/08/2025 + R$150,00.", pontos: 2000 },
-            { id: 104, nome: "2º Lugar: Meio período de folga dia 01/08/2025 + R$100,00", pontos: 1000 },
+            { id: 1, nome: "1º Lugar: Folga integral dia 01/08/2025 + R$150,00." },
+            { id: 2, nome: "2º Lugar: Meio período de folga dia 01/08/2025 + R$100,00" },
         ];
 
-        function popularRanking() {
-            const tabelaRanking = document.getElementById('tabela-ranking');
-            tabelaRanking.innerHTML = ''; 
+        Gamificacao.renderPremios(premios, "lista-premios");
 
-            const rankingOrdenado = [...vendedores].sort((a, b) => b.pontos - a.pontos);
-
-            rankingOrdenado.forEach((vendedor, index) => {
-                const row = tabelaRanking.insertRow();
-                const posicaoCell = row.insertCell();
-                const nomeCell = row.insertCell();
-                const pontosCell = row.insertCell();
-
-                posicaoCell.textContent = index + 1;
-                nomeCell.textContent = vendedor.nome;
-                pontosCell.textContent = vendedor.pontos;
-            });
-        }
-
-        function definirDestaque() {
-            const ranking = [...vendedores].sort((a, b) => b.pontos - a.pontos);
-            const primeiro = ranking[0];
-            const segundo = ranking[1];
-            const terceiro = ranking[2];
-            const quarto = ranking[3];
-
-            document.getElementById('primeiro-destaque').textContent = `🥇 ${primeiro.nome} — ${primeiro.pontos} pontos`;
-            document.getElementById('segundo-destaque').textContent = `🥈 ${segundo.nome} — ${segundo.pontos} pontos`;
-            document.getElementById('terceiro-destaque').textContent = `🥉 ${terceiro.nome} — ${terceiro.pontos} pontos`;    
-            document.getElementById('quarto-destaque').textContent = `4º ${quarto.nome} — ${quarto.pontos} pontos`;
-        }
-
-        function popularPremios() {
-            const listaPremios = document.getElementById('lista-premios');
-            listaPremios.innerHTML = '';
-
-            premios.forEach(premio => {
-                const listItem = document.createElement('li');
-                listItem.textContent = `${premio.nome}`;
-                listaPremios.appendChild(listItem);
-            });
-        }
-
-        function popularResgate() {
-            const vendedorSelect = document.getElementById('vendedor-resgate');
-            const premioSelect = document.getElementById('premio-resgate');
-
-            vendedores.forEach(vendedor => {
-                const option = document.createElement('option');
-                option.value = vendedor.id;
-                option.textContent = vendedor.nome;
-                vendedorSelect.appendChild(option);
-            });
-
-            premios.forEach(premio => {
-                const option = document.createElement('option');
-                option.value = premio.id;
-                option.textContent = premio.nome;
-                premioSelect.appendChild(option); 
-            });
-        }
-
-        function resgatarPremio() {
-            const vendedorId = parseInt(document.getElementById('vendedor-resgate')?.value);
-            const premioId = parseInt(document.getElementById('premio-resgate')?.value);
-            const mensagemResgate = document.getElementById('mensagem-resgate');
-
-            const vendedor = vendedores.find(v => v.id === vendedorId);
-            const premio = premios.find(p => p.id === premioId);
-
-            if (!vendedor || !premio) {
-                mensagemResgate.textContent = "Selecione um vendedor e um prêmio válidos.";
-                return;
-            }
-
-            if (vendedor.pontos >= premio.pontos) {
-                vendedor.pontos -= premio.pontos;
-                mensagemResgate.textContent = `${vendedor.nome} resgatou "${premio.nome}"! Pontos restantes: ${vendedor.pontos}`;
-                popularRanking();
-                definirDestaque();
-            } else {
-                mensagemResgate.textContent = `${vendedor.nome} não tem pontos suficientes para resgatar "${premio.nome}".`;
-            }
-        }
-
-        // Inicialização
-        popularRanking();
-        definirDestaque();
-        popularPremios();
-        popularResgate();
     </script>
 </body>
 </html>

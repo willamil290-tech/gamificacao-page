@@ -1,0 +1,148 @@
+/* UI extra para as páginas de gamificação (não depende de build) */
+
+:root{
+  --card-bg: #ffffff;
+  --card-border: rgba(0,0,0,0.08);
+  --shadow: 0 6px 18px rgba(0,0,0,0.06);
+  --radius: 14px;
+  --brand: #19416b;
+}
+
+#lancamento {
+  margin-top: 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+#lancamento .sub {
+  margin-top: -6px;
+  color: rgba(0,0,0,0.65);
+  font-size: 0.95rem;
+}
+
+#lancamento .controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0 10px;
+}
+
+#lancamento .controls .left {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid rgba(0,0,0,0.15);
+  background: #fff;
+  padding: 9px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.btn.primary{
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
+.btn.danger{
+  border-color: rgba(220, 38, 38, 0.35);
+  color: rgb(220, 38, 38);
+}
+
+.badge {
+  font-size: 0.9rem;
+  color: rgba(0,0,0,0.6);
+}
+
+.table-wrap{
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+#tabela-lancamento{
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+#tabela-lancamento th, #tabela-lancamento td{
+  padding: 10px 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  text-align: center;
+  vertical-align: middle;
+}
+
+#tabela-lancamento thead th{
+  background: rgba(25, 65, 107, 0.06);
+  color: rgba(0,0,0,0.85);
+  font-weight: 700;
+}
+
+#tabela-lancamento .td-nome{
+  text-align: left;
+  font-weight: 700;
+}
+
+#tabela-lancamento input.num{
+  width: 88px;
+  max-width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.15);
+  outline: none;
+}
+
+#tabela-lancamento input.num:focus{
+  border-color: rgba(25, 65, 107, 0.6);
+  box-shadow: 0 0 0 3px rgba(25, 65, 107, 0.15);
+}
+
+#tabela-lancamento input.chk{
+  width: 20px;
+  height: 20px;
+  accent-color: var(--brand);
+}
+
+#tabela-lancamento .td-total{
+  font-weight: 800;
+  color: rgba(0,0,0,0.9);
+}
+
+#lancamento details.formula{
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(0,0,0,0.12);
+}
+
+#lancamento details.formula summary{
+  cursor: pointer;
+  font-weight: 700;
+  color: rgba(0,0,0,0.85);
+}
+
+#lancamento details.formula ul{
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
+@media (max-width: 720px){
+  #lancamento{ padding: 12px; }
+  #tabela-lancamento input.num{ width: 74px; }
+}
